@@ -2,6 +2,7 @@ package com.project.app.estudiantes.services;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -59,6 +60,31 @@ public class StudentsServciesJPA implements IStudentsServices {
 			json2 = new Gson().toJson(listStudents);
 		}
 		return "[" + json1 + "," + json2 + "]";
+	}
+
+	@Override
+	public String deleteStudent(Long id) {
+		String json1 = null;
+		MessageCover MC = null;
+		Students student = null;
+		try {
+			if(!studentsRepo.existsById(id)) {
+				MC = new MessageCover(404);
+				json1 = new Gson().toJson(MC);
+			}
+			else {
+				student = studentsRepo.findById(id).get();
+				studentsRepo.delete(student);
+				MC = new MessageCover(200);
+				json1 = new Gson().toJson(MC);
+			}
+		}
+		catch(Exception ex) {
+			ex.printStackTrace();
+			MC = new MessageCover(500);
+			json1 = new Gson().toJson(MC);
+		}
+		return "[" + json1 + "]";
 	}
 
 }
