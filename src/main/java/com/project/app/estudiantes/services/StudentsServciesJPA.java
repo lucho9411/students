@@ -87,4 +87,46 @@ public class StudentsServciesJPA implements IStudentsServices {
 		return "[" + json1 + "]";
 	}
 
+	@Override
+	public String editStudent(StudentsDto studentDto) {
+		String json1 = null;
+		MessageCover MC = null;
+		try {
+			if(!studentsRepo.existsById(studentDto.getId())) {
+				MC = new MessageCover(404);
+				json1 = new Gson().toJson(MC);
+			}
+			else {
+				Students student = studentsRepo.findById(studentDto.getId()).get();
+				student.setIdentification(studentDto.getIdentification());
+				student.setNames(studentDto.getFirstNames());
+				student.setLastNames(studentDto.getLastNames());
+				student.setPhone(studentDto.getPhones());
+				student.setAddress(studentDto.getAddress());
+				if(studentDto.getEmail()==null||studentDto.getEmail().equals("")) {
+					student.setEmail(null);
+				}
+				else {
+					student.setEmail(studentDto.getEmail());
+				}
+				if(studentDto.getImage()==null||studentDto.getImage().equals("")) {
+						student.setImage(null);
+				}
+				else {
+					student.setImage(studentDto.getImage());
+				}
+				studentsRepo.save(student);
+				MC = new MessageCover(200);
+				json1 = new Gson().toJson(MC);
+			}
+		}
+		catch(Exception ex) {
+			ex.printStackTrace();
+			ex.printStackTrace();
+			MC = new MessageCover(500);
+			json1 = new Gson().toJson(MC);
+		}
+		return "[" + json1 + "]";
+	}
+
 }
